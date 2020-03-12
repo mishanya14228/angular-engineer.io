@@ -1,0 +1,67 @@
+<div class="row mt-4 mb-2">
+  <div class="form-group col-6">
+    <label for="search" class="sr-only">Search title/url/author</label>
+    <input
+      type="search"
+      class="form-control"
+      id="search"
+      placeholder="Search title/url/author"
+      [(ngModel)]="searchQuery"
+    />
+  </div>
+</div>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th (click)="toggleSort('title')">
+        Title
+        <img
+          *ngIf="sort.field === 'title'"
+          src="https://img.icons8.com/metro/26/000000/chevron-up.png"
+          [ngClass]="{ rotated: sort.direction === 'asc' }"
+        />
+      </th>
+      <th>URL</th>
+      <th (click)="toggleSort('created_at')">
+        Created at
+        <img
+          *ngIf="sort.field === 'created_at'"
+          src="https://img.icons8.com/metro/26/000000/chevron-up.png"
+          [ngClass]="{ rotated: sort.direction === 'asc' }"
+        />
+      </th>
+      <th>Author</th>
+    </tr>
+  </thead>
+  <tbody
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="50"
+    (scrolled)="onScroll()"
+  >
+    <tr
+      *ngFor="
+        let item of api.tableItems
+          | filter: sort.field:sort.direction:api.tableItems
+          | search: searchQuery
+      "
+      (click)="rowClick(item)"
+    >
+      <td>{{ item.title }}</td>
+      <td>{{ item.url }}</td>
+      <td>{{ item.created_at }}</td>
+      <td>{{ item.author }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<div *ngIf="itemToInspect" class="modalWindow">
+  <div class="modalBackground" (click)="itemToInspect = null"></div>
+  <div class="modalData">
+    {{ itemToInspect | json }}
+    <div class="btns">
+      <div class="btn btn-danger" (click)="itemToInspect = null">Close</div>
+    </div>
+  </div>
+</div>
